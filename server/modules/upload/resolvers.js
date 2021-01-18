@@ -1,32 +1,30 @@
-const path = require('path')
+const { join, parse } = require('path')
 const fs = require('fs')
-const getIpAdress = require('../../lib/getIpAddress')
-const id = require('shortid')
+const ApolloError = require('apollo-server-express')
+const shortid = require('shortid')
 
-module.exports = {
-	Query: {
-		uploads: () => "String"
-	},
-	Mutation: {
-		uploadFile: async(_, { file }) => {
-			try {
-				const { createReadStream, filename, mimetype, encoding } = await file
+module.exports =  {
+    Query: {
+        hello: () => "Hello World"
+    },
+    Mutation: {
+        uploadFile: async (_, { file }) => {
+            try {
+            	const { createReadStream, filename, mimetype, encoding } = await file
+            	console.log(createReadStream)
 				const id = shortid.generate()
 				const stream = createReadStream()
 				const savedFileName = `${id}-${filename.replace(/ /g,'')}`
 				const path = `./uploadedFiles/${savedFileName}`
 				return new Promise( async (resolve, reject) => {
-					// let writePathToDataBase = await productModel.insertProductFile(savedFileName, productId)
     				return stream
       				.pipe(fs.createWriteStream(path))
       				.on("finish", () => resolve({ path, filename, mimetype, encoding, savedFileName }))
       				.on("error", reject)
 				})
-			}
-			catch(error) {
-				return new Error(error).message || error
-			}
-			
-		}
-	}
+            } catch (err) {
+                throw new Error(err.message);
+            }
+        },
+    }
 }

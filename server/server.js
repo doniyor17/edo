@@ -12,7 +12,7 @@ server.applyMiddleware({ app, path: '/graphql'})
 
 const httpServer = http.createServer(app)
 
-app.use(express.static(path.join(__dirname, '/uploadedFiles')))
+app.use(express.static('./server/uploadedFiles'))
 
 httpServer.listen({ port: PORT }, () => {
 	console.log('http://localhost:' + PORT + server.graphqlPath)
